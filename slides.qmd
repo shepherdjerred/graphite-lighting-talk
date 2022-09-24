@@ -12,8 +12,6 @@ jupyter: python3
 * Go over potential solutions
 * Be enlightened with Graphite
 
-## TEST
-
 ## Motivation (Reviewer)
 
 Reviewers want PRs to be easy to review
