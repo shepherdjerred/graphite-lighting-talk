@@ -1,0 +1,4 @@
+- source: slides.qmd
+  quarto-pub:
+    - id: 4a357143-761d-4c60-b0da-a4631414861c
+      url: 'https://quartopub.com/sites/sjerred/better-prs-with-graphite'
