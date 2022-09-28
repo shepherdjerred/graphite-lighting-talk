@@ -2,7 +2,6 @@
 title: "Better PRs with Graphite"
 author: "Jerred Shepherd"
 format: revealjs
-jupyter: python3
 ---
 
 # Working on many PRs at once is hard
@@ -14,10 +13,6 @@ jupyter: python3
 
 A CLI tool that helps you keep commits small through a concept known as...
 
-# Stacked Changes
-
-Stacked changes essentially allow you to review a _diff_ instead of a _commit_
-
 ## Stacked Changes
 
 Stacked changes are a concept used in many tools like:
@@ -27,16 +22,20 @@ Stacked changes are a concept used in many tools like:
 * Code Review at Amazon
 * Many open source implementations exist
 
+# Stacked Changes
+
+Stacked changes essentially allow you to review a _diff_ instead of a _commit_
+
+## Stacked Changes
+
+There's a very subtle difference between a diff and a commit. The main benefit is that you can submit review changes based on work that is yet to be merged
+
 ## Stacks
 
-It's a subtle difference. It means that you can split up one large feature branch into several smallers PRs
+This means that you can split up one large feature branch into several smallers PRs and have them reviewed in parallel
 
 # Graphite
 
 Handles all of the rebasing required to manage stacked commits
 
 # Demo
-
-```
-
-```
