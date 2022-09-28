@@ -5,325 +5,38 @@ format: revealjs
 jupyter: python3
 ---
 
-## Outline
+# Working on many PRs at once is hard
 
-* Identify ideal attributes of a PR
-* Understand the problem of attaining our goals
-* Go over potential solutions
-* Be enlightened with Graphite
+* Dependent changes are hard to model
+* It's easy to become blocked when waiting for a PR to be reviewed
 
-## Motivation (Reviewer)
+# Graphite
 
-Reviewers want PRs to be easy to review
+A CLI tool that helps you keep commits small through a concept known as...
 
-PRs should be:
+# Stacked Changes
 
-* Understandable
-* As small as possible
-* Focused, ideally on one thing
-  * Put refactoring, formatting changes, and logic changes into separate commits (or ideally, separate PRs!)
-
-## Takeaway (Reviewer)
-
-Authors should respect reviewers by writing PRs that are easy to understand and review.
-
-## Motivation (Author)
-
-Authors want:
-
-* Their PR to be merged in quickly
-* Their work to be checked thoroughly for mistakes
-* To spend little time cleaning up their code for review
-
-## Motivation (Author)
-
-Authors don't want to be blocked when waiting for a PR to be reviewed. This can happen when they submit a large piece of work and are waiting on feedback.
-
-## Takeaway (Author)
-
-* Smaller, focused PRs will get reviewed quicker
-* Smaller, focused PRs will are more likely to be thoroughly understood and reviewed
-
-## Takeaway (Author)
-
-Larger commits are easier to author. Nobody wants to spend an hour splitting up their mega-commit into chunks
-
-# What should we do?
-
-## Before your PR
-
-No matter what tools you use, if your commits are a mess your PRs won't be any better.
-
-Ideally each individual commit (as opposed to a branch of commits) will pass CI.
-
-  * If your PR has a "fix CI" commit, then your commits aren't individually reviewable
-
-## Before your PR
-
-Let's go over ways we can split up a commit
-
-You won't always be able to follow these rules. Everyone creates monstrous commits every once in a while.
-
-## Before your PR (Separate Concerns)
-
-Create separate commits for separate concerns
-
-# Formatting
-
-Fix and commit any formatting issues before starting work in a file
-
-  * Splitting a formatting change from other code changes is tedious and time consuming
-  * It is always more expensive to split commits than to squash commits
-
-# Refactoring
-
-Put any refactoring in its own PR
-
-As a bonus, this lets you run tests against your refactor to verify that your refactoring commit doesn't change the application's behavior
-
-## Behavioral Changes (bug fixes, features, etc.)
-
-Split up behavioral changes when possible
-
-If you're working on a feature that touches the different areas, try creating separate commits for each area
-
-If you're making a large number of changes in one file, try to make separate commits for each function
-
-  * `git add --interactive` is great for this! It allows you to commit only certain hunks (parts) of a file.
-
-## Creating your PR
-
-Let's imagine a hypothetical application that has a command-line interface, database, API, and web UI.
-
-You have the perfect set of Git commits on a branch named `feature-1`. There are four small, focused commits.
-
-```{python}
-import graphviz
-mega_pr_1_commits_main = graphviz.Digraph()
-mega_pr_1_commits_main.node('A', '<HEAD> <feature-1> add feature 1 to cli')
-mega_pr_1_commits_main.node('B', 'add feature 1 to db')
-mega_pr_1_commits_main.node('C', 'add feature 1 to api')
-mega_pr_1_commits_main.node('D', 'fix formatting')
-mega_pr_1_commits_main.node('E', '\<origin/main\>')
-mega_pr_1_commits_main.edge('A', 'B')
-mega_pr_1_commits_main.edge('B', 'C')
-mega_pr_1_commits_main.edge('C', 'D')
-mega_pr_1_commits_main.edge('D', 'E')
-mega_pr_1_commits_main
-```
-
-# Make a PR
-
-Let's create a PR merging from `feature-1` -> `main`!
-
-* Note: By default PRs on GitHub merge into the `main` branch, but you can create PRs to merge into any branch you'd like. This will be important later!
-
-## `feature-1` branch graph
-
-```{python}
-import graphviz
-mega_pr_1_branch = graphviz.Digraph()
-mega_pr_1_branch.node('A', 'feature-1 (4 commits)')
-mega_pr_1_branch.node('B', 'main')
-mega_pr_1_branch.edge('A', 'B')
-mega_pr_1_branch
-```
-
-## `feature-1` analysis
-
-This is a straightforward approach:
-
-* Reviewers can review the PR one commit at a time by heading to the commits tab on GitHub
-* Your PR will be easier to understand because the concerns are separated
-* It's easier for the reviewer to look at just one chunk of code at a time
-
-# More commits!
-
-You submitted your PR, but you still have more work to do.
-
-## More commits!
-
-You have a few options:
-
-1. Create a new branch on `main`
-  * This works unless you need commits from your `feature-1` branch
-2. Create a new branch off of `feature-1`
-3. Continue pushing commits to `feature-1`
-4. Be blocked until `feature-1` is merged into `main` (not ideal)
-
-## More commits!
-
-You're continuing work on `feature-1`, so you create a branch off of that. You could continue pushing work to `feature-1`, but you don't want to make the PR too large, and you don't want to be constantly updating it while others are reviewing it.
-
-You create another 3 commits on top of `feature-1` on a new branch aptly named `feature-1-continued`.
-
-You create a PR merging `feature-1-continued` -> `feature-1`.
-
-## Commit Graph
-
-```{python}
-import graphviz
-mega_pr_2_commits_main = graphviz.Digraph()
-mega_pr_2_commits_main.node('A', '<HEAD> <feature-1-continued> add ui integration tests for feature #1')
-mega_pr_2_commits_main.node('B', 'add feature #1 to ui')
-mega_pr_2_commits_main.node('C', 'update documentation for feature #1')
-mega_pr_2_commits_main.node('D', '\<feature-1\> (4 commits)')
-mega_pr_2_commits_main.node('E', '\<main\>')
-mega_pr_2_commits_main.edge('A', 'B')
-mega_pr_2_commits_main.edge('B', 'C')
-mega_pr_2_commits_main.edge('C', 'D')
-mega_pr_2_commits_main.edge('D', 'E')
-mega_pr_2_commits_main
-```
-
-## Branch Graph
-
-```{python}
-import graphviz
-mega_pr_2_branch = graphviz.Digraph()
-mega_pr_2_branch.node('A', 'feature-1 (4 commits)')
-mega_pr_2_branch.node('C', 'feature-1-continued (3 commits)')
-mega_pr_2_branch.node('B', 'main')
-mega_pr_2_branch.edge('A', 'B')
-mega_pr_2_branch.edge('C', 'A')
-mega_pr_2_branch
-```
-
-## `more-work` analysis
-
-This is where things start to break down.
-
-You can't merge your work from `feature-1-continued` into `main` until `feature-1` is merged in. If you want to continue work on `feature-1`, you'll have to create another branch, and create even more code that can't be merged in until `feature-1` is ready.
-
-* If you have to make a revision to `feature-1`, you have to rebase `feature-1-continued`.
-* If you update `main`, you have to rebase `feature-1` and `feature-1-continuted`.
-
-## Branching out
-
-Your changes to the DB and API were fine, but the CLI needs a major revision. You can't merge in any of your reviewed work until the CLI work is complete.
-
-You realize that you could just create separate branches and separate branches (and PRs) for each commit so that you can merge in your changes faster.
-
-## Branching out (commits)
-
-```{python}
-import graphviz
-big_graph = graphviz.Digraph()
-big_graph.node('A', 'add feature 1 to cli')
-big_graph.node('B', 'add feature 1 to db')
-big_graph.node('C', 'add feature 1 to api')
-big_graph.node('D', 'fix formatting')
-big_graph.node('E', 'add feature #1 to ui')
-big_graph.node('F', 'add ui integration tests for feature #1')
-big_graph.node('G', 'update documentation for feature #1')
-big_graph.node('H', '\<origin/main\>')
-big_graph.edge('G', 'H')
-big_graph.edge('C', 'B')
-big_graph.edge('A', 'C')
-big_graph.edge('E', 'C')
-big_graph.edge('B', 'D')
-big_graph.edge('D', 'H')
-big_graph.edge('F', 'E')
-big_graph
-```
-
-# Branching out
-
-You created one branch per commit, so your branch graph is almost identical to the commit graph. You combined your UI and UI test branches into one since they're closely related.
-
-## Branching out (branches)
-
-```{python}
-import graphviz
-big_graph = graphviz.Digraph()
-big_graph.node('A', '<feature-1-cli >add feature 1 to cli')
-big_graph.node('B', '<feature-1-db> add feature 1 to db')
-big_graph.node('C', '<feature-1-api> add feature 1 to api')
-big_graph.node('D', '<fix-formatting> fix formatting')
-big_graph.node('E', 'add feature #1 to ui')
-big_graph.node('F', '<feature-1-ui> add ui integration tests for feature #1')
-big_graph.node('G', '<feature-1-docs> update documentation for feature #1')
-big_graph.node('H', '\<origin/main\>')
-big_graph.edge('G', 'H')
-big_graph.edge('C', 'B')
-big_graph.edge('A', 'C')
-big_graph.edge('E', 'C')
-big_graph.edge('B', 'D')
-big_graph.edge('D', 'H')
-big_graph.edge('F', 'E')
-big_graph
-```
-
-# Branching out
-
-Now that you have your branches, you have to create your PRs. This means pushing your work, and opening one PR for each branch.
-
-You'll have to make sure you select the correct branch to merge into, otherwise your diffs will not appear correctly on GitHub.
-
-# Branching out
-
-You can now merge your changes in quicker!
-
-If your CLI change is going to take a few revisions, you won't block your other work.
-
-# Rebasing
-
-Someone else on the team pushed to `main`, and you want to pick up the change.
-
-## Rebase Hell
-
-To update your branches and PRs, you'll just need to run these 20 commands:
-
-* `git checkout main` && `git pull`
-* `git checkout fix-formatting` && `git rebase main` && `git push`
-* `git checkout feature-1-db` && `git rebase fix-formatting` && `git push`
-* `git checkout feature-1-api` && `git rebase feature-1-db` && `git push`
-* `git checkout feature-1-cli` && `git rebase feature-1-api` && `git push`
-* `git checkout feature-1-ui` && `git rebase feature-1-api` && `git push`
-* `git checkout feature-1-docs` && `git rebase main` && `git push`
-
-For fans of algorithms, this is a pre-order traversal!
-
-# Rebase Hell
-
-Okay, that sounds bad, but how often do you really need to pull from `main`?
-
-You could probably get away without it, and only rebase right before you merge each commit.
-
-# Rebase Hell
-
-Except you'll have to do that exact same thing for every descendent branch for every revision to a commit that you make. If you never revise your PRs, then that's not a problem.
-
-You'll have to run 53 commands if you make just one revision to every branch.
-
-You'll become very familiar with `git rebase`.
-
-## Rebase Hell
-
-Git has no built-in facility to handle this well. You could write a script to do the rebasing and pushing for you, but you'll still have to be sure you create the PRs correctly on GitHub.
+Stacked changes essentially allow you to review a _diff_ instead of a _commit_
 
 ## Stacked Changes
 
-Finally! We've arrived.
+Stacked changes are a concept used in many tools like:
 
-Graphite solves this problem with a concept known as stacked changes.
+* Critique at Google
+* Phabricator at Facebook
+* Code Review at Amazon
+* Many open source implementations exist
 
-## Stacked Changes
+## Stacks
 
-Stacked Changes are common in big tech internal tools
+It's a subtle difference. It means that you can split up one large feature branch into several smallers PRs
 
-* Facebook
-* Google
-* Amazon
+# Graphite
 
-## Stacked Changes
+Handles all of the rebasing required to manage stacked commits
 
-They allow you to review _diffs_ instead of _branches_. This is exactly what we want to do, and it what Graphite emulates while still using the PR/branch model of GitHub.
+# Demo
 
-## Stacked Changes
+```
 
-You manage your commits as a stacks, which are tracked as branches in GitHub.
-
-## Graphite
-
-## Other Tools
+```
